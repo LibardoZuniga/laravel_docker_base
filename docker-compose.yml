@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+    nginx:
+        image: nginx:stable-alpine
+        container_name: nginx
+        restart: always
+        ports:
+            - 8888:80
+        volumes:
+            - ./src:/var/www/html
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - php
+            - mysql
+        networks:
+            - laravel_base
+    mysql: 
+        image: mysql:5.7
+        container_name: mysql
+        restart: always
+        environment:
+            MYSQL_DATABASE: laravel_base
+            MYSQL_USER: laravel_base
+            MYSQL_PASSWORD: cha123acmm
+            MYSQL_ROOT_PASSWORD: rootcha123acmm
+        ports:
+            - 3309:3306
+        volumes:
+            - ./mysql:/var/lib/mysql
+        networks:
+            - laravel_base
+    php:
+        build:
+            context: .
+            dockerfile: dockerPhp
+        container_name: php
+        volumes:
+            - ./src:/var/www/html
+        ports:
+            - 9000:80
+        networks:
+            - laravel_base
+networks: 
+    laravel_base:
